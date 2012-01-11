@@ -19,17 +19,47 @@ rshell_controller = None
 input_args = ""
 """ Command Dictionary """
 commands = { 
-		"shell" : None 
+		"quit" : quit 
+		"shell" : shell
 		}
+""" Shell Sub-Commands """
+shell_commands = {
+	"status" : None
+	}
+def shell(): 
+	""" Shell interface functions, if there is only one
+	argument, it prints the status of the roomba shell and 
+	controller status. The second argument is the sub command 
+	that will print more specific shell values. 
+	"""
+
+def quit():
+	""" Shell Command: 
+		Quits the shell, saves no values. 
+	"""
+	exit()
+
+def runcom(cstr):
+	""" Recieves a string that is the command to run, 
+	then will use it as a key in the command dictionary. 
+	If the key is mapped, then the command there will be 
+	executed. 
+	"""
+	try:
+		com = commands[cstr]
+		com()
+	except KeyError as e:
+		print "invalid command"
 
 def getInput():
 	""" Gets the input from the user, fills the argument
 	buffer, trys to run the first argument, finally clearing
 	the buffer for the next input.  
 	"""
-	uin = raw_input("rshell:> ")
-	print(uin)
-
+	uin = str(raw_input("rshell:> "))
+	input_args = uin.split(" ") 
+	runcom(input_args[0])
+	intput_args = []		# Cleared for next input string
 
 if __name__ == "__main__":
 	ttydev = raw_input("Roomba ttyX Path: ")
