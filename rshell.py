@@ -12,3 +12,33 @@
 """
 
 from hxRoomba import *
+
+""" Universal Shell Roomba Controller """
+rshell_controller = None 
+""" Shell Input Buffer """
+input_args = ""
+""" Command Dictionary """
+commands = { 
+		"shell" : None 
+		}
+
+def getInput():
+	""" Gets the input from the user, fills the argument
+	buffer, trys to run the first argument, finally clearing
+	the buffer for the next input.  
+	"""
+	uin = raw_input("rshell:> ")
+	print(uin)
+
+
+if __name__ == "__main__":
+	ttydev = raw_input("Roomba ttyX Path: ")
+	baud = int(raw_input("Baud Rate: "))
+	try:
+		print("Creating Controller...")
+		rcontroller = roombaController(ttydev, baud)
+	except Exception as e: 
+		print("Error: "+str(e))
+	while True: 
+		getInput()
+	exit()
