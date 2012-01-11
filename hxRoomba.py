@@ -1,59 +1,40 @@
 import serial
 import icreatepyrobot as pyrobot
 import time
-import pygame
 
 class roombaController():
 	def __init__(self,tty,baudRate):
 		self.serialConn = serial.Serial(tty,baudRate)
 		self.roomba = pyrobot.Roomba(self.serialConn)
+		self.speed = pyrobot.VELOCITY_SLOW
 	def engage(self):
 		self.roomba.Control()
 
 	def right(self):
-		self.roomba.TurnInPlace(pyrobot.VELOCITY_SLOW,direction='cw')
+		self.roomba.TurnInPlace(self.speed,direction='cw')
 		time.sleep(0.5)
 		self.roomba.Stop()
 
 	def left(self):
-		self.roomba.TurnInPlace(pyrobot.VELOCITY_SLOW,direction='ccw')
+		self.roomba.TurnInPlace(self.speed,direction='ccw')
 		time.sleep(0.5)
 		self.roomba.Stop()
 
 	def forward(self):
-		self.roomba.DriveStraight(pyrobot.VELOCITY_SLOW)
+		self.roomba.DriveStraight(self.speed)
 		time.sleep(0.5)
 		self.roomba.Stop()
 	def backward(self):
-		self.roomba.DriveStraight(pyrobot.VELOCITY_SLOW * -1)
+		self.roomba.DriveStraight(self.speed * -1)
 		time.sleep(0.5)
 		self.roomba.Stop()
+	
+	def setSpeed(self,speed):
+		"""1,2,3: slow fast max"""
+		if speed == 1:
+			self.speed = pyrobot.VELOCITY_SLOW
+		if speed == 2:
+			self.speed = pyrobot.VELOCITY_FAST
+		if speed == 3:
+			self.speed = pyrobot.VELOCITY_MAX
 
-if __name__ == "__main__":
-	roomba = roombaController("/dev/ttyUSB0",115200)
-	roomba.engage()
-	pygame.init()
-	j = pygame.joystick.Joystick(0)
-	j.init()
-	#axis 1: -1=forward, 1=backwards
-	#axis 0: -1=strafe left, 1=strafe right
-	#axis 2: -1=turn left, 1=turn right
-	try:
-		while True:
-			pygame.event.pump()
-			for i in range(0, j.get_numaxes()):
-				axisData = j.get_axis(i)
-				if axisData != 0.00:
-					if i == 1:
-						if axisData <= -0.90:
-							roomba.forward()
-						if axisData >= 0.90:
-							roomba.backward()
-					if i == 2:
-						if axisData >= 0.90:
-							roomba.right()
-						if axisData <= -0.90:
-							roomba.left()
-
-	except KeyboardInterrupt:
-		j.quit()
