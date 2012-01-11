@@ -12,6 +12,11 @@
 """
 from hxRoomba import *
 
+""" Universal Shell Roomba Controller """
+shell_controller = None 
+""" Shell Input Buffer """
+input_args = ""
+
 def quit():
 	""" Shell Command: 
 		Quits the shell, saves no values. 
@@ -26,7 +31,7 @@ def shell_status():
 
 """ Shell Sub-Commands """
 shell_commands = {
-		"status" : pass 
+		"status" : shell_status 	#TODO: Write Print Status Function
 		}
 
 
@@ -46,15 +51,29 @@ def shell():
 	except IndexError as e: 
 		shell_commands["status"]()
 		
+def connect():
+	""" Connects the shell to the roomba 
+	at the device specified, at the baud 
+	rate specified. 
+	"""
+	try: 
+		dev = input_args[1]
+		print(dev)
+		baud = int(intput_args[2])
+		print(baud)
+		try: 
+			controller = roombaController(dev,baud)
+			roomba_controllers.append(controller)
+		except Exception as e: 
+			print("An Error Has Occurred:\n\t")
+	except IndexError as e: 
+		print("Insufficient Arguments: connect (device) (baud_rate) ")
 
-""" Universal Shell Roomba Controller """
-shell_controller = None 
-""" Shell Input Buffer """
-input_args = ""
 """ Command Dictionary """
 commands = { 
 		"quit" : quit,
-		"shell" : shell 
+		"shell" : shell, 
+		"connect" : connect
 		}
 
 def runcom(cstr):
@@ -80,13 +99,6 @@ def getInput():
 	intput_args = []		# Cleared for next input string
 
 if __name__ == "__main__":
-	ttydev = raw_input("Roomba ttyX Path: ")
-	baud = int(raw_input("Baud Rate: "))
-	try:
-		print("Creating Controller...")
-		rcontroller = roombaController(ttydev, baud)
-	except Exception as e: 
-		print("Error: "+str(e))
 	while True: 
 		getInput()
 	exit()
