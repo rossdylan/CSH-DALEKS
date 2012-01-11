@@ -10,34 +10,52 @@
 		with the methods provided, will allow users full control of 
 		the roomba.
 """
-
 from hxRoomba import *
 
-""" Universal Shell Roomba Controller """
-rshell_controller = None 
-""" Shell Input Buffer """
-input_args = ""
-""" Command Dictionary """
-commands = { 
-		"quit" : quit 
-		"shell" : shell
-		}
+def quit():
+	""" Shell Command: 
+		Quits the shell, saves no values. 
+	"""
+	print "rage quit"
+	exit()
+
+def shell_status():
+	""" Prints the status of the shell, and 
+	it's controllers. """
+	pass
+
 """ Shell Sub-Commands """
 shell_commands = {
-	"status" : None
-	}
+		"status" : pass 
+		}
+
+
 def shell(): 
 	""" Shell interface functions, if there is only one
 	argument, it prints the status of the roomba shell and 
 	controller status. The second argument is the sub command 
 	that will print more specific shell values. 
 	"""
+	try: 
+		sub_com = input_args[1]
+		try:
+			shell_com = shell_commands[sub_com]
+			shell_com()
+		except KeyError as e: 
+			print("Uknown Shell Command.")
+	except IndexError as e: 
+		shell_commands["status"]()
+		
 
-def quit():
-	""" Shell Command: 
-		Quits the shell, saves no values. 
-	"""
-	exit()
+""" Universal Shell Roomba Controller """
+shell_controller = None 
+""" Shell Input Buffer """
+input_args = ""
+""" Command Dictionary """
+commands = { 
+		"quit" : quit,
+		"shell" : shell 
+		}
 
 def runcom(cstr):
 	""" Recieves a string that is the command to run, 
