@@ -587,8 +587,8 @@ class Roomba(object):
                         'ccw': RADIUS_TURN_IN_PLACE_CCW}
     print direction
     sys.stdout.flush()
-    #self.Drive(velocity, valid_directions[direction])
-    self.Drive(velocity, RADIUS_TURN_IN_PLACE_CW)
+    self.Drive(velocity, valid_directions[direction])
+    #self.Drive(velocity, RADIUS_TURN_IN_PLACE_CW)
 
   def Dock(self):
     """Start looking for the dock and then dock."""
