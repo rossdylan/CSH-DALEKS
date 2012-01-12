@@ -1,8 +1,8 @@
-from hxRoomba import roombaController
+from hxRoomba import networkRoombaController
 import pygame
 
 if __name__ == "__main__":
-	roomba = roombaController("/dev/ttyUSB0",115200)
+	roomba = networkRoombaController("localhost",8080)
 	roomba.engage()
 	pygame.init()
 	j = pygame.joystick.Joystick(0)
