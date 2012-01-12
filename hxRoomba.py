@@ -17,15 +17,16 @@ class roombaController():
 
 	def right(self):
 		self.roomba.TurnInPlace(self.speed,direction='cw')
-
+		time.sleep(0.5)
 	def left(self):
 		self.roomba.TurnInPlace(self.speed,direction='ccw')
-
+		time.sleep(0.5)
 	def forward(self):
 		self.roomba.DriveStraight(self.speed)
+		time.sleep(0.5)
 	def backward(self):
 		self.roomba.DriveStraight(self.speed * -1)
-
+		time.sleep(0.5)
 	def setSpeed(self,speed):
 		"""1,2,3: slow fast max"""
 		if speed == 1:
