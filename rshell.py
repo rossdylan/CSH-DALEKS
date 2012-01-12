@@ -43,9 +43,8 @@ def rCom(args):
 	based on the roomba_commands dictionary. 
 	"""
 	try: 
-		print(args)
 		com = roomba_commands[args[1]]
-		com(args)
+		com(roomba_controller,args)
 	except IndexError as e: 
 		print("No Command")
 	finally:
@@ -107,7 +106,10 @@ def runcom(args):
 		print(args)
 		com = commands[args[0]]
 		print(str(com))
-		com(args)
+		if args[0] == "roomba":
+			rCom(roomba_controller)
+		else:
+			com(args)
 	except KeyError as e:
 		print "invalid command"
 
