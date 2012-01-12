@@ -10,29 +10,21 @@ class roombaController():
 		self.serialConn = serial.Serial(tty,baudRate)
 		self.roomba = pyrobot.Roomba(self.serialConn)
 		self.speed = pyrobot.VELOCITY_SLOW
-		self.methodList = ('engage','right','left','forward','backward','setSpeed')
+		self.methodList = ('engage','right','left','forward','backward','setSpeed', 'stop')
 
 	def engage(self):
 		self.roomba.Control()
 
 	def right(self):
 		self.roomba.TurnInPlace(self.speed,direction='cw')
-		time.sleep(0.5)
-		self.roomba.Stop()
 
 	def left(self):
 		self.roomba.TurnInPlace(self.speed,direction='ccw')
-		time.sleep(0.5)
-		self.roomba.Stop()
 
 	def forward(self):
 		self.roomba.DriveStraight(self.speed)
-		time.sleep(0.5)
-		self.roomba.Stop()
 	def backward(self):
 		self.roomba.DriveStraight(self.speed * -1)
-		time.sleep(0.5)
-		self.roomba.Stop()
 
 	def setSpeed(self,speed):
 		"""1,2,3: slow fast max"""
@@ -42,6 +34,9 @@ class roombaController():
 			self.speed = pyrobot.VELOCITY_FAST
 		if speed == 3:
 			self.speed = pyrobot.VELOCITY_MAX
+	
+	def stop(self):
+		self.roomba.Stop()
 
 class networkRoombaServer(roombaController):
 	def __init__(self,port,tty,baudRate):
