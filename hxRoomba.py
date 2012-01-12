@@ -1,6 +1,7 @@
 import serial
 import icreatepyrobot as pyrobot
 import time
+import pygame
 
 class roombaController():
 	def __init__(self,tty,baudRate):
@@ -25,11 +26,28 @@ class roombaController():
 		self.roomba.Stop()
 
 if __name__ == "__main__":
-	roomba = pyrobot.Roomba(serial.Serial("/dev/ttyUSB0", baudrate=115200, timeout=2))
+	roomba = roombaController("/dev/ttyUSB0",115200)
+	roomba.engage()
+	pygame.init()
+	j = pygame.joystick.Joystick(0)
+	j.init()
+	#axis 1: -1=forward, 1=backwards
+	#axis 0: -1=strafe left, 1=strafe right
+	#axis 2: -1=turn left, 1=turn right
+	try:
+		while True:
+			pygame.event.pump()
+			for i in range(0, j.get_numaxes()):
+				axisData = j.get_axis(i)
+				if axisData != 0.00:
+					if i == 1:
+						if axisData == -1:
+							roomba.forward()
+					if i == 2:
+						if axisData == 1:
+							roomba.left()
+						if axisData == -1:
+							roomba.right()
 
-	roomba.Control()
-	roomba.sensors.GetAll()
-	print roomba.sensors['charge']
-	roomba.TurnInPlace(pyrobot.VELOCITY_SLOW,direction='counter-clockwise')
-	roomba.DriveStraight(pyrobot.VELOCITY_SLOW)
-	raw_input()
+	except KeyboardInterrupt:
+		j.quit()
