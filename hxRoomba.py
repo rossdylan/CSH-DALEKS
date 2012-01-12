@@ -51,9 +51,9 @@ if __name__ == "__main__":
 							roomba.backward()
 					if i == 2:
 						if axisData >= 0.90:
-							roomba.left()
-						if axisData <= -0.90:
 							roomba.right()
+						if axisData <= -0.90:
+							roomba.left()
 
 	except KeyboardInterrupt:
 		j.quit()
