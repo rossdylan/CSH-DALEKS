@@ -12,8 +12,8 @@
 """
 from hxRoomba import *
 
-""" Universal Shell Roomba Controller List"""
-roomba_controllers = []
+""" Shell's Roomba and Its Controller """
+roomba_controller = None
 
 def quit(args):
 	""" Shell Command: 
@@ -25,7 +25,11 @@ def quit(args):
 def shell_status(args):
 	""" Prints the status of the shell, and 
 	it's controllers. """
-	pass
+	try:
+		if args[2] == "roomba":
+			print(roomba_controller)
+	except Exception as e: 
+		print(e)
 
 """ Shell Sub-Commands """
 shell_commands = {
@@ -46,8 +50,8 @@ def shell(args):
 		except KeyError as e: 
 			print("Uknown Shell Command.")
 	except IndexError as e: 
-		shell_commands["status"](args)
-		
+		pass
+
 def connect(args):
 	""" Connects the shell to the roomba 
 	at the device specified, at the baud 
@@ -59,12 +63,11 @@ def connect(args):
 		baud = int(args[1])
 		print(baud)
 		try: 
-			controller = roombaController(dev,baud)
-			roomba_controllers.append(controller)
+			roomba_controller = roombaController(dev,baud)
 		except Exception as e: 
-			print("An Error Has Occurred:\n\t")
+			print("An Error Has Occurred:\n")
 	except Exception as e2: 
-		print("Error: "+str(e2))
+		print("Error:\n"+str(e2))
 
 """ Command Dictionary """
 commands = { 
