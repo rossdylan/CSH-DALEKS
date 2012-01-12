@@ -11,17 +11,21 @@ class roombaController():
 		self.roomba.Control()
 
 	def right(self):
-		self.roomba.TurnInPlace(pyrobot.VELOCITY_SLOW,direction='clockwise')
+		self.roomba.TurnInPlace(pyrobot.VELOCITY_SLOW,direction='cw')
 		time.sleep(0.5)
 		self.roomba.Stop()
 
 	def left(self):
-		self.roomba.TurnInPlace(pyrobot.VELOCITY_SLOW,direction='counter-clockwise')
+		self.roomba.TurnInPlace(pyrobot.VELOCITY_SLOW,direction='ccw')
 		time.sleep(0.5)
 		self.roomba.Stop()
 
 	def forward(self):
 		self.roomba.DriveStraight(pyrobot.VELOCITY_SLOW)
+		time.sleep(0.5)
+		self.roomba.Stop()
+	def backward(self):
+		self.roomba.DriveStraight(pyrobot.VELOCITY_SLOW * -1)
 		time.sleep(0.5)
 		self.roomba.Stop()
 
@@ -41,12 +45,14 @@ if __name__ == "__main__":
 				axisData = j.get_axis(i)
 				if axisData != 0.00:
 					if i == 1:
-						if axisData == -1:
+						if axisData <= -0.90:
 							roomba.forward()
+						if axisData >= 0.90:
+							roomba.backward()
 					if i == 2:
-						if axisData == 1:
+						if axisData >= 0.90:
 							roomba.left()
-						if axisData == -1:
+						if axisData <= -0.90:
 							roomba.right()
 
 	except KeyboardInterrupt:
