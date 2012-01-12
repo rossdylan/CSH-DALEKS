@@ -14,17 +14,15 @@ from hxRoomba import *
 
 """ Universal Shell Roomba Controller """
 shell_controller = None 
-""" Shell Input Buffer """
-input_args = ""
 
-def quit():
+def quit(args):
 	""" Shell Command: 
 		Quits the shell, saves no values. 
 	"""
 	print "rage quit"
 	exit()
 
-def shell_status():
+def shell_status(args):
 	""" Prints the status of the shell, and 
 	it's controllers. """
 	pass
@@ -34,15 +32,15 @@ shell_commands = {
 		"status" : shell_status 	#TODO: Write Print Status Function
 		}
 
-
-def shell(): 
+def shell(args): 
 	""" Shell interface functions, if there is only one
 	argument, it prints the status of the roomba shell and 
 	controller status. The second argument is the sub command 
 	that will print more specific shell values. 
 	"""
+	print(args)
 	try: 
-		sub_com = input_args[1]
+		sub_com = args[1]
 		try:
 			shell_com = shell_commands[sub_com]
 			shell_com()
@@ -51,23 +49,23 @@ def shell():
 	except IndexError as e: 
 		shell_commands["status"]()
 		
-def connect():
+def connect(args):
 	""" Connects the shell to the roomba 
 	at the device specified, at the baud 
 	rate specified. 
 	"""
 	try: 
-		dev = input_args[1]
+		dev = args[0]
 		print(dev)
-		baud = int(intput_args[2])
+		baud = int(args[1])
 		print(baud)
 		try: 
 			controller = roombaController(dev,baud)
 			roomba_controllers.append(controller)
 		except Exception as e: 
 			print("An Error Has Occurred:\n\t")
-	except IndexError as e: 
-		print("Insufficient Arguments: connect (device) (baud_rate) ")
+	except IndexError as e2: 
+		print("Error: "+str(e2))
 
 """ Command Dictionary """
 commands = { 
@@ -76,7 +74,7 @@ commands = {
 		"connect" : connect
 		}
 
-def runcom(cstr):
+def runcom(cstr, args):
 	""" Recieves a string that is the command to run, 
 	then will use it as a key in the command dictionary. 
 	If the key is mapped, then the command there will be 
@@ -84,7 +82,7 @@ def runcom(cstr):
 	"""
 	try:
 		com = commands[cstr]
-		com()
+		com(args)
 	except KeyError as e:
 		print "invalid command"
 
@@ -94,9 +92,8 @@ def getInput():
 	the buffer for the next input.  
 	"""
 	uin = str(raw_input("rshell:> "))
-	input_args = uin.split(" ") 
-	runcom(input_args[0])
-	intput_args = []		# Cleared for next input string
+	args = uin.split(" ") 
+	runcom(args[0], args[1:])
 
 if __name__ == "__main__":
 	while True: 
