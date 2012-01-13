@@ -13,7 +13,7 @@
 from hxRoomba import *
 
 """ Shell's Roomba and Its Controller """
-roomba_controller = None
+roomba_controller =	roombaController
 
 def quit(args):
 	""" Shell Command: 
@@ -27,9 +27,33 @@ def shell_status(args):
 	it's controllers. """
 	print(roomba_controller)
 
+""" Roomba Commands """
+roomba_commands = { 
+		"engage"	: roomba_controller.engage, 
+		"right"		: roomba_controller.right,
+		"left"		: roomba_controller.left,
+		"forward"	: roomba_controller.forward,
+		"backward"	: roomba_controller.backward,
+		"stop"		: roomba_controller.stop
+	}
+
+def rCom(args): 
+	""" Function to handle roomba commands, 
+	essentially runs whatever string the user types 
+	based on the roomba_commands dictionary. 
+	"""
+	try: 
+		print(args)
+		com = roomba_commands[args[1]]
+		com(args)
+	except IndexError as e: 
+		print("No Command")
+	finally:
+		pass
+
 """ Shell Sub-Commands """
 shell_commands = {
-		"status" : shell_status 	#TODO: Write Print Status Function
+		"status" : shell_status 
 		}
 
 def shell(args): 
@@ -39,7 +63,6 @@ def shell(args):
 	that will print more specific shell values. 
 	"""
 	try: 
-		print("Made It Here")
 		sub_com = args[1]
 		try:
 			shell_com = shell_commands[sub_com]
@@ -56,9 +79,7 @@ def connect(args):
 	"""
 	try: 
 		dev = args[1]
-		print(dev)
 		baud = int(args[2])
-		print(baud)
 		try: 
 			print("Attempting To Connect To Roomba")
 			roomba_controller = roombaController(dev,baud)
@@ -72,7 +93,8 @@ def connect(args):
 commands = { 
 		"quit" : quit,
 		"shell" : shell, 
-		"connect" : connect
+		"connect" : connect,
+		"roomba" : rCom
 		}
 
 def runcom(args):
@@ -82,7 +104,9 @@ def runcom(args):
 	executed. 
 	"""
 	try:
+		print(args)
 		com = commands[args[0]]
+		print(str(com))
 		com(args)
 	except KeyError as e:
 		print "invalid command"
