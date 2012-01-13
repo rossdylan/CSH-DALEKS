@@ -1,13 +1,17 @@
 from hxRoomba import networkRoombaController
 import pygame
-
+import math
 if __name__ == "__main__":
-	roomba = networkRoombaController("synapse.wireless.rit.edu",8080)
+	roomba = networkRoombaController("tula.student.rit.edu",8080)
 	roomba.engage()
 	pygame.init()
 	j = pygame.joystick.Joystick(0)
 	j.init()
-	moving = False
+	turning = False
+	movingForward = False
+	movingBackward = False
+	speedChanged = False
+	lastSpeed = 0
 	#axis 1: -1=forward, 1=backwards
 	#axis 0: -1=strafe left, 1=strafe right
 	#axis 2: -1=turn left, 1=turn right
@@ -16,57 +20,50 @@ if __name__ == "__main__":
 			pygame.event.pump()
 			for i in range(0, j.get_numaxes()):
 				axisData = j.get_axis(i)
-
+				print i
 				if axisData != 0.00:
 					if i == 1:
 						if axisData < 0.00:
-							if axisData < 0.00 and axisData >= -0.30:
-								roomba.setSpeed(1)
-							if axisData < -0.30 and axisData >= -0.60:
-								roomba.setSpeed(2)
-							else:
-								roomba.setSpeed(3)
-							roomba.forward()
-							moving = True
+							if movingForward == False:
+								roomba.forward()
+								movingForward = True
 
 						if axisData > 0:
-							if axisData > 0 and axisData <= 0.30:
-								roomba.setSpeed(1)
-							if axisData > 0.30 and axisData <= 0.60:
-								roomba.setSpeed(2)
-							else:
-								roomba.setSpeed(3)
-							roomba.backward()
-							moving = True
-						elif axisData == 0.00:
-							if moving == True:
-								roomba.stop()
-								moving = False
+							if movingBackward == False:
+								roomba.backward()
+								movingBackward = True
 					if i == 2:
 						if axisData > 0.00:
-							if axisData > 0.00 and axisData <= 0.30:
-								roomba.setSpeed(1)
-							if axisData > 0.30 and axisData <= 0.60:
-								roomba.setSpeed(2)
-							else:
-								roomba.setSpeed(3)
-							roomba.right()
-							moving = True
+							if turning == False:
+								roomba.right()
+								turning = True
 
 						if axisData <= 0.00:
-							if axisData < 0.00 and axisData >= -0.30:
-								roomba.setSpeed(1)
-							if axisData < -0.30 and axisData >= -0.60:
-								roomba.setSpeed(2)
-							else:
+							if turning == False:
+								roomba.left()
+								turning = True
+					if i == 3:
+						if  math.fabs(lastSpeed - axisData) >= 0.90:
+							speedChanged = False
+						if speedChanged == False:
+							if axisData > 0.00:
 								roomba.setSpeed(3)
-							roomba.left()
-							moving = True
+							if axisData == 0.00:
+								roomba.setSpeed(2)
+							if axisData < 0.00:
+								roomba.setSpeed(1)
+							speedChanged = True
+				elif axisData == 0.00 and (i == 0 or i == 2):
+					if turning == True:
+						roomba.stop()
+						turning = False
+					if movingForward == True:
+						roomba.stop()
+						movingForward = False
+					if movingBackward == True:
+						roomba.stop()
+						movingBackward = False
 
-						elif axisData == 0.00:
-							if moving == True:
-								roomba.stop()
-								moving = False
 
 	except KeyboardInterrupt:
 		j.quit()
