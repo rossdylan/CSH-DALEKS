@@ -25,11 +25,7 @@ def quit(args):
 def shell_status(args):
 	""" Prints the status of the shell, and 
 	it's controllers. """
-	try:
-		if args[2] == "roomba":
-			print(roomba_controller)
-	except Exception as e: 
-		print(e)
+	print(roomba_controller)
 
 """ Shell Sub-Commands """
 shell_commands = {
@@ -43,6 +39,7 @@ def shell(args):
 	that will print more specific shell values. 
 	"""
 	try: 
+		print("Made It Here")
 		sub_com = args[1]
 		try:
 			shell_com = shell_commands[sub_com]
@@ -58,12 +55,14 @@ def connect(args):
 	rate specified. 
 	"""
 	try: 
-		dev = args[0]
+		dev = args[1]
 		print(dev)
-		baud = int(args[1])
+		baud = int(args[2])
 		print(baud)
 		try: 
+			print("Attempting To Connect To Roomba")
 			roomba_controller = roombaController(dev,baud)
+			print("Success.")
 		except Exception as e: 
 			print("An Error Has Occurred:\n")
 	except Exception as e2: 
@@ -76,14 +75,14 @@ commands = {
 		"connect" : connect
 		}
 
-def runcom(cstr, args):
+def runcom(args):
 	""" Recieves a string that is the command to run, 
 	then will use it as a key in the command dictionary. 
 	If the key is mapped, then the command there will be 
 	executed. 
 	"""
 	try:
-		com = commands[cstr]
+		com = commands[args[0]]
 		com(args)
 	except KeyError as e:
 		print "invalid command"
@@ -95,9 +94,17 @@ def getInput():
 	"""
 	uin = str(raw_input("rshell:> "))
 	args = uin.split(" ") 
-	runcom(args[0], args[1:])
+	runcom(args)
 
 if __name__ == "__main__":
+	dev = raw_input("Roomba Device Location: ")
+	baud = raw_input("Roomba Baud Rate: ")
+	try: 
+		roomba_controller = roombaController(dev,int(baud))
+	except Exception as e: 
+		print("Error Connecting To Roomba: "+str(e))
+	
 	while True: 
 		getInput()
+
 	exit()
