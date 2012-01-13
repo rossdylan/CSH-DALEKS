@@ -44,7 +44,7 @@ def rCom(args):
 	"""
 	try: 
 		com = roomba_commands[args[1]]
-		com(roomba_controller,args)
+		com()
 	except IndexError as e: 
 		print("No Command")
 	finally:
