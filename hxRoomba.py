@@ -52,7 +52,7 @@ class TimeoutTransport(xmlrpc.Transport):
 	def set_timeout(self, timeout):
 		self.timeout = timeout
 	def make_connection(self, host):
-		h = httplib.HTTP(host, timeout=self.timeout)
+		h = httplib.HTTPConnection(host, timeout=self.timeout)
 		return h
 
 class networkRoombaController():
