@@ -35,7 +35,7 @@ class roombaController():
 		if speed == 3:
 			self.speed = pyrobot.VELOCITY_MAX
 	def stop(self):
-		self.roomba.SlowStop(pyrobot.VELOCITY_FAST)
+		self.roomba.Stop()
 
 class networkRoombaServer(roombaController):
 	def __init__(self,port,tty,baudRate):
