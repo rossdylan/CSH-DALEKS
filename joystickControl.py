@@ -1,6 +1,5 @@
 from hxRoomba import networkRoombaController
 import pygame
-import math
 if __name__ == "__main__":
 	roomba = networkRoombaController("tula.student.rit.edu",8080)
 	roomba.engage()
@@ -47,17 +46,6 @@ if __name__ == "__main__":
 							if turning == False:
 								roomba.left()
 								turning = True
-					if i == 3:
-						if  math.fabs(lastSpeed - axisData) >= 0.90:
-							speedChanged = False
-						if speedChanged == False:
-							if axisData > 0.00:
-								roomba.setSpeed(3)
-							if axisData == 0.00:
-								roomba.setSpeed(2)
-							if axisData < 0.00:
-								roomba.setSpeed(1)
-							speedChanged = True
 				elif axisData == 0.00 and (i == 0 or i == 2):
 					if turning == True and i == 2:
 						print "Sending turning stop"

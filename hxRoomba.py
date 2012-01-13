@@ -1,9 +1,8 @@
 import serial
 import icreatepyrobot as pyrobot
-import time
 import xmlrpclib as xmlrpc
 from SimpleXMLRPCServer import SimpleXMLRPCServer as xmlrpcserv
-
+import httplib
 
 class roombaController():
 	def __init__(self,tty,baudRate):
@@ -35,9 +34,8 @@ class roombaController():
 			self.speed = pyrobot.VELOCITY_FAST
 		if speed == 3:
 			self.speed = pyrobot.VELOCITY_MAX
-	
 	def stop(self):
-		self.roomba.Stop()
+		self.roomba.SlowStop()
 
 class networkRoombaServer(roombaController):
 	def __init__(self,port,tty,baudRate):
@@ -49,11 +47,20 @@ class networkRoombaServer(roombaController):
 		self.server.register_introspection_functions()
 		self.server.serve_forever()
 
+class TimeoutTransport(xmlrpc.Transport):
+	timeout = 2.0
+	def set_timeout(self, timeout):
+		self.timeout = timeout
+	def make_connection(self, host):
+		h = httplib.HTTP(host, timeout=self.timeout)
+		return h
+
 class networkRoombaController():
 	def __init__(self,address,port):
 		self.addr = address
 		self.port = port
-		self.server = xmlrpc.ServerProxy("http://%s:%s" % (self.addr,self.port))
+		t = TimeoutTransport()
+		self.server = xmlrpc.Server("http://%s:%s" % (self.addr,self.port),transport=t)
 		serverMethods = self.server.system.listMethods()
 		for method in serverMethods:
 			self.__dict__[method] = getattr(self.server,method)
