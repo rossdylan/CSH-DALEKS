@@ -12,8 +12,21 @@
 """
 from hxRoomba import *
 
+""" ################################################## """
+""" ##############INITIALIZE ROOMBA################### """
+
 """ Shell's Roomba and Its Controller """
-roomba_controller =	roombaController
+roomba_controller = None	
+
+dev = raw_input("Roomba Device Location: ")
+baud = raw_input("Roomba Baud Rate: ")
+try: 
+	roomba_controller = roombaController(dev,int(baud))
+except Exception as e: 
+	print("Error Connecting To Roomba: "+str(e))
+	exit()
+
+""" ################################################## """
 
 def quit(args):
 	""" Shell Command: 
@@ -29,12 +42,12 @@ def shell_status(args):
 
 """ Roomba Commands """
 roomba_commands = { 
-		"engage"	: roomba_controller.engage, 
-		"right"		: roomba_controller.right,
-		"left"		: roomba_controller.left,
-		"forward"	: roomba_controller.forward,
-		"backward"	: roomba_controller.backward,
-		"stop"		: roomba_controller.stop
+		"engage"	: getattr(roomba_controller, "engage"), 
+		"right"		: getattr(roomba_controller, "right"),
+		"left"		: getattr(roomba_controller, "left"),
+		"forward"	: getattr(roomba_controller, "forward"),
+		"backward"	: getattr(roomba_controller, "backward"),
+		"stop"		: getattr(roomba_controller, "stop")
 	}
 
 def rCom(args): 
@@ -103,13 +116,8 @@ def runcom(args):
 	executed. 
 	"""
 	try:
-		print(args)
 		com = commands[args[0]]
-		print(str(com))
-		if args[0] == "roomba":
-			rCom(roomba_controller)
-		else:
-			com(args)
+		com(args)
 	except KeyError as e:
 		print "invalid command"
 
@@ -123,13 +131,7 @@ def getInput():
 	runcom(args)
 
 if __name__ == "__main__":
-	dev = raw_input("Roomba Device Location: ")
-	baud = raw_input("Roomba Baud Rate: ")
-	try: 
-		roomba_controller = roombaController(dev,int(baud))
-	except Exception as e: 
-		print("Error Connecting To Roomba: "+str(e))
-	
+		
 	while True: 
 		getInput()
 
