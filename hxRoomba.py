@@ -9,7 +9,7 @@ class roombaController():
 		self.serialConn = serial.Serial(tty,baudRate)
 		self.roomba = pyrobot.Roomba(self.serialConn)
 		self.speed = pyrobot.VELOCITY_SLOW
-		self.methodList = ('engage','right','left','forward','backward','setSpeed', 'stop')
+		self.methodList = ('engage','right','left','forward','backward','setSpeed', 'stop', 'getSensorData','onCliff')
 
 	def engage(self):
 		self.roomba.Control()
@@ -36,6 +36,24 @@ class roombaController():
 			self.speed = pyrobot.VELOCITY_MAX
 	def stop(self):
 		self.roomba.Stop()
+
+	def getSensorData(self,sensor):
+		self.roomba.sensors.Clear()
+		self.roomba.sensors.GetAll()
+		if sensor in self.roomba.sensors:
+			return self.roomba.sensors[sensor]
+		else:
+			return None
+	
+	def onCliff(self):
+		right = self.getSensorData('cliff-right')
+		left = self.getSensorData('cliff-left')
+		front_left = self.getSensorData('cliff-front-left')
+		front_right = self.getSensorData('cliff-front-right')
+		if right or left or front_left or front_right:
+			return True
+		else:
+			return False
 
 class networkRoombaServer(roombaController):
 	def __init__(self,port,tty,baudRate):
