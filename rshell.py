@@ -17,6 +17,8 @@ from hxRoomba import *
 
 """ Shell's Roomba and Its Controller """
 roomba_controller = None	
+""" Roomba Server """
+roomba_server = None
 
 dev = raw_input("Roomba Device Location: ")
 baud = raw_input("Roomba Baud Rate: ")
@@ -28,11 +30,23 @@ except Exception as e:
 
 """ ################################################## """
 
+def server(args): 
+	""" Starts a server on the shell's machine, prompts 
+	for the port and tty device to connect to. This allows
+	a network roomba object to be used within the shell. 
+	"""
+	port = int(raw_input("Network Port: "))
+	device = str(raw_input("Device Path: "))
+	baudr = int(raw_input("Baud Rate: "))
+	try:
+		roomba_server = networkRoombaServer(roomba_controller)
+	except Exception as e: 
+		print("Error: "+str(e))
+
 def quit(args):
 	""" Shell Command: 
 		Quits the shell, saves no values. 
 	"""
-	print "rage quit"
 	exit()
 
 def shell_status(args):
@@ -40,14 +54,23 @@ def shell_status(args):
 	it's controllers. """
 	print(roomba_controller)
 
+def speed_stub(args):
+	""" stub function to run the roomba's set speed command in hxRoomba. 
+	The function requires an extra argument, and this stub handles it. """
+	try:
+		roomba_controller.setSpeed(args[2])
+	except Exception as e: 
+		print("Set Speed Error: " + str(e))
+
 """ Roomba Commands """
 roomba_commands = { 
-		"engage"	: getattr(roomba_controller, "engage"), 
-		"right"		: getattr(roomba_controller, "right"),
-		"left"		: getattr(roomba_controller, "left"),
-		"forward"	: getattr(roomba_controller, "forward"),
-		"backward"	: getattr(roomba_controller, "backward"),
-		"stop"		: getattr(roomba_controller, "stop")
+		"engage"	: (False, getattr(roomba_controller, "engage")), 
+		"right"		: (False, getattr(roomba_controller, "right")),
+		"left"		: (False, getattr(roomba_controller, "left")),
+		"forward"	: (False, getattr(roomba_controller, "forward")),
+		"backward"	: (False, getattr(roomba_controller, "backward")),
+		"stop"		: (False, getattr(roomba_controller, "stop")),
+		"setspeed" 	: (True, speed_stub)
 	}
 
 def rCom(args): 
@@ -57,7 +80,10 @@ def rCom(args):
 	"""
 	try: 
 		com = roomba_commands[args[1]]
-		com()
+		if com[0] == True:
+			com[1](args)
+		else:
+			com[1]()
 	except IndexError as e: 
 		print("No Command")
 	finally:
@@ -65,7 +91,8 @@ def rCom(args):
 
 """ Shell Sub-Commands """
 shell_commands = {
-		"status" : shell_status 
+		"status" : shell_status,
+		"server" : server
 		}
 
 def shell(args): 
@@ -84,28 +111,11 @@ def shell(args):
 	except IndexError as e: 
 		pass
 
-def connect(args):
-	""" Connects the shell to the roomba 
-	at the device specified, at the baud 
-	rate specified. 
-	"""
-	try: 
-		dev = args[1]
-		baud = int(args[2])
-		try: 
-			print("Attempting To Connect To Roomba")
-			roomba_controller = roombaController(dev,baud)
-			print("Success.")
-		except Exception as e: 
-			print("An Error Has Occurred:\n")
-	except Exception as e2: 
-		print("Error:\n"+str(e2))
-
 """ Command Dictionary """
 commands = { 
 		"quit" : quit,
+		"exit" : quit, 
 		"shell" : shell, 
-		"connect" : connect,
 		"roomba" : rCom
 		}
 
