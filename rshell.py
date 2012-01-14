@@ -17,6 +17,8 @@ from hxRoomba import *
 
 """ Shell's Roomba and Its Controller """
 roomba_controller = None	
+""" Roomba Server """
+roomba_server = None
 
 dev = raw_input("Roomba Device Location: ")
 baud = raw_input("Roomba Baud Rate: ")
@@ -27,6 +29,19 @@ except Exception as e:
 	exit()
 
 """ ################################################## """
+
+def server(args): 
+	""" Starts a server on the shell's machine, prompts 
+	for the port and tty device to connect to. This allows
+	a network roomba object to be used within the shell. 
+	"""
+	port = int(raw_input("Network Port: "))
+	device = str(raw_input("Device Path: "))
+	baudr = int(raw_input("Baud Rate: "))
+	try:
+		roomba_server = networkRoombaServer(roomba_controller)
+	except Exception as e: 
+		print("Error: "+str(e))
 
 def quit(args):
 	""" Shell Command: 
@@ -76,7 +91,8 @@ def rCom(args):
 
 """ Shell Sub-Commands """
 shell_commands = {
-		"status" : shell_status 
+		"status" : shell_status,
+		"server" : server
 		}
 
 def shell(args): 
