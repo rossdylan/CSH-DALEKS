@@ -32,7 +32,6 @@ def quit(args):
 	""" Shell Command: 
 		Quits the shell, saves no values. 
 	"""
-	print "rage quit"
 	exit()
 
 def shell_status(args):
@@ -40,14 +39,23 @@ def shell_status(args):
 	it's controllers. """
 	print(roomba_controller)
 
+def speed_stub(args):
+	""" stub function to run the roomba's set speed command in hxRoomba. 
+	The function requires an extra argument, and this stub handles it. """
+	try:
+		roomba_controller.setSpeed(args[2])
+	except Exception as e: 
+		print("Set Speed Error: " + str(e))
+
 """ Roomba Commands """
 roomba_commands = { 
-		"engage"	: getattr(roomba_controller, "engage"), 
-		"right"		: getattr(roomba_controller, "right"),
-		"left"		: getattr(roomba_controller, "left"),
-		"forward"	: getattr(roomba_controller, "forward"),
-		"backward"	: getattr(roomba_controller, "backward"),
-		"stop"		: getattr(roomba_controller, "stop")
+		"engage"	: (False, getattr(roomba_controller, "engage")), 
+		"right"		: (False, getattr(roomba_controller, "right")),
+		"left"		: (False, getattr(roomba_controller, "left")),
+		"forward"	: (False, getattr(roomba_controller, "forward")),
+		"backward"	: (False, getattr(roomba_controller, "backward")),
+		"stop"		: (False, getattr(roomba_controller, "stop")),
+		"setspeed" 	: (True, speed_stub)
 	}
 
 def rCom(args): 
@@ -57,7 +65,10 @@ def rCom(args):
 	"""
 	try: 
 		com = roomba_commands[args[1]]
-		com()
+		if com[0] == True:
+			com[1](args)
+		else:
+			com[1]()
 	except IndexError as e: 
 		print("No Command")
 	finally:
@@ -84,28 +95,11 @@ def shell(args):
 	except IndexError as e: 
 		pass
 
-def connect(args):
-	""" Connects the shell to the roomba 
-	at the device specified, at the baud 
-	rate specified. 
-	"""
-	try: 
-		dev = args[1]
-		baud = int(args[2])
-		try: 
-			print("Attempting To Connect To Roomba")
-			roomba_controller = roombaController(dev,baud)
-			print("Success.")
-		except Exception as e: 
-			print("An Error Has Occurred:\n")
-	except Exception as e2: 
-		print("Error:\n"+str(e2))
-
 """ Command Dictionary """
 commands = { 
 		"quit" : quit,
+		"exit" : quit, 
 		"shell" : shell, 
-		"connect" : connect,
 		"roomba" : rCom
 		}
 
