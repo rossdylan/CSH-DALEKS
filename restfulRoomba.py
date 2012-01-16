@@ -2,7 +2,7 @@
 from hxRoomba import roombaController
 from bottle import route, run, request, abort
 
-class restfulRoombaserver():
+class restfulRoombaServer():
 	def __init__(self,port,tty,baud):
 		self.port = port
 		self.roomba = roombaController(tty,baud)
