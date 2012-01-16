@@ -2,15 +2,28 @@
 from hxRoomba import roombaController
 from bottle import route, run, request, abort
 
-class restfulRoombaServer():
+class restfulRoombaServer(object):
+
+	def __new__(self, *args, **kwargs):
+		obj = super(restfulRoombaServer, self).__new__(self,*args,**kwargs)
+		route('/engage',method='POST')(obj.engage)
+		route('/forward',method='POST')(obj.forward)
+		route('/backward',method='POST')(obj.backward)
+		route('/left',method='POST')(obj.left)
+		route('/right',method='POST')(obj.right)
+		route('/stop',method='POST')(obj.stop)
+		route('/speed',method='POST')(obj.setspeed)
+		route('/sensors/:id',method='GET')(obj.sensors)
+		return obj
+
 	def __init__(self,port,tty,baud):
 		self.port = port
 		self.roomba = roombaController(tty,baud)
 
 	def start(self):
+		self.engage = route(self.engage)
 		run(host='0.0.0.0',port=self.port)
 
-	@route('/engage',method='POST')
 	def engage(self):
 		try:
 			self.roomba.engage()
@@ -18,7 +31,6 @@ class restfulRoombaServer():
 			print 'Error communicating with hardware'
 			abort(503,'Issue communicating with the hardware')
 
-	@route('/forward',method='POST')
 	def forward(self):
 		try:
 			self.roomba.forward()
@@ -26,7 +38,6 @@ class restfulRoombaServer():
 			print 'Error communicating with hardware'
 			abort(503,'Issue communicating with the hardware')
 
-	@route('/backward',method='POST')
 	def backward(self):
 		try:
 			self.roomba.backward()
@@ -34,7 +45,6 @@ class restfulRoombaServer():
 			print 'Error communicating with hardware'
 			abort(503,'Issue communicating with the hardware')
 
-	@route('/left',method='POST')
 	def left(self):
 		try:
 			self.roomba.left()
@@ -42,7 +52,6 @@ class restfulRoombaServer():
 			print 'Error communicating with hardware'
 			abort(503,'Issue communicating with the hardware')
 
-	@route('/right',method='POST')
 	def right(self):
 		try:
 			self.roomba.right()
@@ -50,7 +59,6 @@ class restfulRoombaServer():
 			print 'Error communicating with hardware'
 			abort(503,'Issue communicating with the hardware')
 
-	@route('/stop',method='POST')
 	def stop(self):
 		try:
 			self.roomba.stop()
@@ -58,7 +66,6 @@ class restfulRoombaServer():
 			print 'Error communicating with hardware'
 			abort(503,'Error communicating with the hardware')
 
-	@route('/speed',method='POST')
 	def setspeed(self):
 		data = request.body.readline()
 		if not data:
@@ -72,7 +79,6 @@ class restfulRoombaServer():
 			except Exception:
 				abort(503,'Error communicating with the hardware')
 
-	@route('/sensors/:id',method='GET')
 	def sensors(self,id):
 		try:
 			return self.roomba.getSensorData(id)
