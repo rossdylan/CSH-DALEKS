@@ -1,2 +1,2 @@
-from hxRoomba import networkRoombaServer
-server = networkRoombaServer(8080,"/dev/tty.usbserial",115200)
+from xmlrpcRoomba import networkRoombaServer
+server = networkRoombaServer(int(raw_input('Enter a port: ')),raw_input("Enter tty: "),115200)
