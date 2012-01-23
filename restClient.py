@@ -10,9 +10,9 @@ class restfulRoombaClient():
 		self.postURLs = {"forward": self.baseurl + "forward",
 				"backward": self.baseurl + "backward",
 				"right": self.baseurl + "right",
-				"left": self.basurl + "left",
+				"left": self.baseurl + "left",
 				"setSpeed": self.baseurl + "speed",
-				"stop": self.basurl + "stop"}
+				"stop": self.baseurl + "stop"}
 		self.getURLs = {"getSensorData": self.baseurl + "sensors/"}
 
 	"""Lets get all of our post commands done first (I guess post is appropriate here?
