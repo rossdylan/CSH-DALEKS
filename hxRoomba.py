@@ -31,6 +31,7 @@ class roombaController():
 			self.speed = pyrobot.VELOCITY_FAST
 		if speed == 3:
 			self.speed = pyrobot.VELOCITY_MAX
+
 	def stop(self):
 		self.roomba.Stop()
 
