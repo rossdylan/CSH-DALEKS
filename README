@@ -3,22 +3,30 @@ The CSH DALEKS Project
 
 Explaniation of file layout:
 	icreatepyrobot.py:
-		This file contains the roomba python api. It exposes the low level controls for the roomba.
+		This file contains the roomba python api. It exposes the low level 
+		controls for the roomba.
 		hxRoomba.py sits on top of this to provide the DALEKS api
 	hxRoomba.py:
-		1 layer above the icreatepyrobot api. Acts as a middle man between the servers and the roomba api.
-		the roomba controller which is the basic api class used to control the roomba
+		1 layer above the icreatepyrobot api. Acts as a middle man between 
+		the servers and the roomba api.
+		The roomba controller which is the basic api class used to control 
+		the roomba
 	restfulRoomba.py:
-		Contains one of the 2 server classes. This one being a restful api server.
-		The api server sits on top of the hxRoomba api class, and lets remote users interact with the roomba
+		Contains one of the 2 server classes. This one being a restful api 
+		server. The api server sits on top of the hxRoomba api class, 
+		and lets remote users interact with the roomba
 	xmlrpcRoomba.py:
 		Contains the second server class. The xmlrpc api server.
-		This is an older and slower api server which was pretty much deprecated when the rest server start working.
+		This is an older and slower api server which was pretty much 
+		deprecated when the rest server start working.
 		(Warning, here be lag)
 	xmlrpcServer.py:
-		This does no contain a server, however it does allow you to start an xmlrpc server
+		This does no contain a server, however it does allow you 
+		to start an xmlrpc server
 	restClient.py:
-		Contains a client that connects to the roomba via the restful api.
-		This client class exposes the same methods as the class in hxRoomba.
+		Contains a client that connects to the roomba via the 
+		restful api. This client class exposes the same methods 
+		as the class in hxRoomba.
 	rShell.py:
-		A Command line iterface to the roomba allowing for control via text commands.
+		A Command line iterface to the roomba allowing for control 
+		via text commands.
