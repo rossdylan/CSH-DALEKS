@@ -36,9 +36,7 @@ class roombaController():
 
 	def getSensorData(self,sensor):
 		self.roomba.sensors.Clear()
+		self.engage()
 		self.roomba.sensors.GetAll()
-		if sensor in self.roomba.sensors:
-			return self.roomba.sensors[sensor]
-		else:
-			return None
+		return self.roomba.sensors[sensor]
 

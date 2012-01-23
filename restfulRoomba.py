@@ -13,7 +13,7 @@ class restfulRoombaServer(object):
 		route('/right',method='POST')(obj.right)
 		route('/stop',method='POST')(obj.stop)
 		route('/speed',method='POST')(obj.setspeed)
-		route('/sensors/:id',method='GET')(obj.sensors)
+		route('/sensors/<id>',method='GET')(obj.sensors)
 		return obj
 
 	def __init__(self,port,tty,baud):
@@ -67,7 +67,7 @@ class restfulRoombaServer(object):
 			abort(503,'Error communicating with the hardware')
 
 	def setspeed(self):
-		data = request.body.readline()
+		data = int(request.forms.get('speed'))
 		if not data:
 			abort(400, 'No data recieved')
 		else:
@@ -76,12 +76,13 @@ class restfulRoombaServer(object):
 				self.roomba.setSpeed(data)
 			except ValueError:
 				abort(400,'Invalid data recieved')
-			except Exception:
-				abort(503,'Error communicating with the hardware')
+			except Exception as e:
+				abort(503,'Error communicating with the hardware %s', str(e))
 
 	def sensors(self,id):
 		try:
-			return self.roomba.getSensorData(id)
-		except Exception:
-			print 'Error communicating with the hardware'
-			abort(503,'Error communicating with the hardware')
+			data = self.roomba.getSensorData(id.strip())
+			return str(data)
+		except Exception as e:
+			print 'Error communicating with the hardware: %s' % str(e)
+			abort(503,'Error communicating with the hardware: %s' % str(e))
