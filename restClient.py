@@ -12,7 +12,8 @@ class restfulRoombaClient():
 				"right": self.baseurl + "right",
 				"left": self.baseurl + "left",
 				"setSpeed": self.baseurl + "speed",
-				"stop": self.baseurl + "stop"}
+				"stop": self.baseurl + "stop",
+				"engage": self.baseurl + "engage"}
 		self.getURLs = {"getSensorData": self.baseurl + "sensors/"}
 
 	"""Lets get all of our post commands done first (I guess post is appropriate here?
@@ -29,7 +30,8 @@ class restfulRoombaClient():
 		urllib2.urlopen(self.postURLs['speed'],data=urlencode({'speed',speed}))
 	def stop(self):
 		urllib2.urlopen(self.postURLs['stop'],data=urlencode({'exterminate','humans'}))
-
+	def engage(self):
+		urllib2.urlopen(self.postURLs['engage'],data=urlencode({'exterminate','humans'}))
 	"""Time for our one and only get command"""
 	def getSensorsData(self,sensor):
 		return urllib2.urlopen(self.postURLs['getSensorData'] + sensor).read()
