@@ -6,6 +6,8 @@ class restfulRoombaServer(object):
 
 	def __new__(self, *args, **kwargs):
 		obj = super(restfulRoombaServer, self).__new__(self,*args,**kwargs)
+		route('/lock',method='POST')(obj.lock)
+		route('/unlock',method='POST')(obj.unlock)
 		route('/engage',method='POST')(obj.engage)
 		route('/forward',method='POST')(obj.forward)
 		route('/backward',method='POST')(obj.backward)
@@ -19,12 +21,26 @@ class restfulRoombaServer(object):
 	def __init__(self,port,tty,baud):
 		self.port = port
 		self.roomba = roombaController(tty,baud)
+		self.locked = False
+		self.lockedBy = ""
+
+	def lock(self):
+		if self.locked == False:
+			self.locked = True
+			self.lockedBy = request.environ.get('REMOTE_ADDR')
+	def unlock(self):
+		if self.locked:
+			if self.lockedBy == request.environ.get('REMOTE_ADDR'):
+				self.locked = False
 
 	def start(self):
 		self.engage = route(self.engage)
 		run(host='0.0.0.0',port=self.port)
 
 	def engage(self):
+		if self.locked and self.lockedBy != request.environ.get('REMOTE_ADDR'):
+			abort(403,'This Roomba is in use')
+
 		try:
 			self.roomba.engage()
 		except Exception:
@@ -32,6 +48,9 @@ class restfulRoombaServer(object):
 			abort(503,'Issue communicating with the hardware')
 
 	def forward(self):
+		if self.locked and self.lockedBy != request.environ.get('REMOTE_ADDR'):
+			abort(403,'This Roomba is in use')
+
 		try:
 			self.roomba.forward()
 		except Exception:
@@ -39,6 +58,9 @@ class restfulRoombaServer(object):
 			abort(503,'Issue communicating with the hardware')
 
 	def backward(self):
+		if self.locked and self.lockedBy != request.environ.get('REMOTE_ADDR'):
+			abort(403,'This Roomba is in use')
+
 		try:
 			self.roomba.backward()
 		except Exception:
@@ -46,6 +68,9 @@ class restfulRoombaServer(object):
 			abort(503,'Issue communicating with the hardware')
 
 	def left(self):
+		if self.locked and self.lockedBy != request.environ.get('REMOTE_ADDR'):
+			abort(403,'This Roomba is in use')
+
 		try:
 			self.roomba.left()
 		except Exception:
@@ -53,6 +78,9 @@ class restfulRoombaServer(object):
 			abort(503,'Issue communicating with the hardware')
 
 	def right(self):
+		if self.locked and self.lockedBy != request.environ.get('REMOTE_ADDR'):
+			abort(403,'This Roomba is in use')
+
 		try:
 			self.roomba.right()
 		except Exception:
@@ -60,6 +88,9 @@ class restfulRoombaServer(object):
 			abort(503,'Issue communicating with the hardware')
 
 	def stop(self):
+		if self.locked and self.lockedBy != request.environ.get('REMOTE_ADDR'):
+			abort(403,'This Roomba is in use')
+
 		try:
 			self.roomba.stop()
 		except Exception:
@@ -67,6 +98,9 @@ class restfulRoombaServer(object):
 			abort(503,'Error communicating with the hardware')
 
 	def setspeed(self):
+		if self.locked and self.lockedBy != request.environ.get('REMOTE_ADDR'):
+			abort(403,'This Roomba is in use')
+
 		data = int(request.forms.get('speed'))
 		if not data:
 			abort(400, 'No data recieved')
@@ -80,6 +114,9 @@ class restfulRoombaServer(object):
 				abort(503,'Error communicating with the hardware %s', str(e))
 
 	def sensors(self,id):
+		if self.locked and self.lockedBy != request.environ.get('REMOTE_ADDR'):
+			abort(403,'This Roomba is in use')
+
 		try:
 			data = self.roomba.getSensorData(id.strip())
 			return str(data)
