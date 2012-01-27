@@ -13,11 +13,17 @@ class restfulRoombaClient():
 				"left": self.baseurl + "left",
 				"setSpeed": self.baseurl + "speed",
 				"stop": self.baseurl + "stop",
-				"engage": self.baseurl + "engage"}
+				"engage": self.baseurl + "engage",
+				"lock": self.baseurl + "lock",
+				"unlock": self.baseurl + "unlock"}
 		self.getURLs = {"getSensorData": self.baseurl + "sensors/"}
 
 	"""Lets get all of our post commands done first (I guess post is appropriate here?
 		never really Done rest API design before..."""
+	def lock(self):
+		urllib2.urlopen(self.postURLs['lock'],data=urlencode({'exterminate':'humans'}))
+	def unlock(self):
+		urllib2.urlopen(self.postURLs['unlock'],data=urlencode({'extermiante':'humans'}))
 	def forward(self):
 		urllib2.urlopen(self.postURLs['forward'],data=urlencode({'exterminate':'humans'}))
 	def backward(self):
