@@ -6,6 +6,7 @@ class roombaController():
 		self.serialConn = serial.Serial(tty,baudRate)
 		self.roomba = pyrobot.Roomba(self.serialConn)
 		self.speed = pyrobot.VELOCITY_SLOW
+		#the methodList provides compatibility with the old xmlrpc api
 		self.methodList = ('engage','right','left','forward','backward','setSpeed', 'stop', 'getSensorData','onCliff')
 
 	def engage(self):
