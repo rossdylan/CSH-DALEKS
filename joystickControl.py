@@ -1,4 +1,4 @@
-from xmlrpcRoomba import networkRoombaController
+from restClient import restfulRoombaClient
 import pygame
 def average(nums):
 	total = 0
@@ -7,7 +7,8 @@ def average(nums):
 	return total / len(nums)
 
 if __name__ == "__main__":
-	roomba = networkRoombaController("tula.student.rit.edu",8080)
+	roomba = restfulRoombaClient("tula.student.rit.edu",8080)
+	roomba.lock()
 	roomba.engage()
 	pygame.init()
 	j = pygame.joystick.Joystick(0)
@@ -20,7 +21,7 @@ if __name__ == "__main__":
 	#axis 1: -1=forward, 1=backwards
 	#axis 0: -1=strafe left, 1=strafe right
 	#axis 2: -1=turn left, 1=turn right
-	lastSpeedChange = 0
+	speedChanged = False
 	try:
 		while True:
 			pygame.event.pump()
@@ -34,9 +35,9 @@ if __name__ == "__main__":
 			#this loop is for axis data
 			for i in range(0, j.get_numaxes()):
 				axisData = j.get_axis(i)
-				if axisData == 0:
+				if axisData == 0 and (i==1 or i==2):
 					numZeros += 1
-				if axisData != 0:
+				if axisData != 0 and (i==1 or i==1):
 					numZeros = 0
 				#forward and backwards controls
 				if axisData > 0.00 or axisData < 0.00:
@@ -76,21 +77,23 @@ if __name__ == "__main__":
 								turning = True
 
 					#speed controls
-					if i == 3:
-						#-1 = speed3
-						#0 = speed2
-						#1 = speed1
-						if axisData < 0.00 and lastSpeed != 3:
-							roomba.setSpeed(3)
-							lastSpeed = 3
-						elif axisData == 0.00 and lastSpeed != 2:
-							roomba.setSpeed(2)
-							lastSpeed = 2
-						elif axisData > 0.00 and lastSpeed != 1:
-							roomba.setSpeed(1)
-							lastSpeed = 1
+				if i == 3:
+					#-1 = speed3
+					#0 = speed2
+					#1 = speed1
+					if axisData < -0.80 and lastSpeed != 3:
+						roomba.setSpeed(3)
+						lastSpeed = 3
+
+					elif axisData == 0.00 and lastSpeed != 2:
+						roomba.setSpeed(2)
+						lastSpeed = 2
+
+					elif axisData > 0.80 and lastSpeed != 1:
+						roomba.setSpeed(1)
+						lastSpeed = 1
 				#handle stopping the roomba when the joystick gets zeroed out
-				elif axisData == 0.00 and (i == 0 or i == 2):
+				if axisData == 0.00 and (i == 0 or i == 2):
 					try:
 						if turning == True and i == 2 and numZeros > 3:
 							print "Sending turning stop"
@@ -109,4 +112,5 @@ if __name__ == "__main__":
 
 	except KeyboardInterrupt:
 		j.quit()
+		roomba.unlock()
 
