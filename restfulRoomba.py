@@ -25,19 +25,23 @@ class restfulRoombaServer(object):
 		self.lockedBy = ""
 
 	def lock(self):
+		"""Lock the roomba api so Only one user can use it at a time"""
 		if self.locked == False:
 			self.locked = True
 			self.lockedBy = request.environ.get('REMOTE_ADDR')
 	def unlock(self):
+		"""Unlock the roomba api after usage"""
 		if self.locked:
 			if self.lockedBy == request.environ.get('REMOTE_ADDR'):
 				self.locked = False
 
 	def start(self):
+		"""Start the server"""
 		self.engage = route(self.engage)
 		run(host='0.0.0.0',port=self.port)
 
 	def engage(self):
+		"""Put the roomba serial api into full mode (lets us send commands)"""
 		if self.locked and self.lockedBy != request.environ.get('REMOTE_ADDR'):
 			abort(403,'This Roomba is in use')
 
@@ -48,6 +52,7 @@ class restfulRoombaServer(object):
 			abort(503,'Issue communicating with the hardware')
 
 	def forward(self):
+		"""Move the roomba forward until stop() is called"""
 		if self.locked and self.lockedBy != request.environ.get('REMOTE_ADDR'):
 			abort(403,'This Roomba is in use')
 
@@ -58,6 +63,7 @@ class restfulRoombaServer(object):
 			abort(503,'Issue communicating with the hardware')
 
 	def backward(self):
+		"""Move the roomba backward until stop() is called"""
 		if self.locked and self.lockedBy != request.environ.get('REMOTE_ADDR'):
 			abort(403,'This Roomba is in use')
 
@@ -68,6 +74,7 @@ class restfulRoombaServer(object):
 			abort(503,'Issue communicating with the hardware')
 
 	def left(self):
+		"""turn the roomba CCW until stop() is called"""
 		if self.locked and self.lockedBy != request.environ.get('REMOTE_ADDR'):
 			abort(403,'This Roomba is in use')
 
@@ -78,6 +85,7 @@ class restfulRoombaServer(object):
 			abort(503,'Issue communicating with the hardware')
 
 	def right(self):
+		"""turn the roomba CW until stop() is called"""
 		if self.locked and self.lockedBy != request.environ.get('REMOTE_ADDR'):
 			abort(403,'This Roomba is in use')
 
@@ -88,6 +96,7 @@ class restfulRoombaServer(object):
 			abort(503,'Issue communicating with the hardware')
 
 	def stop(self):
+		"""Stop the roomba if it is in motion"""
 		if self.locked and self.lockedBy != request.environ.get('REMOTE_ADDR'):
 			abort(403,'This Roomba is in use')
 
@@ -98,6 +107,11 @@ class restfulRoombaServer(object):
 			abort(503,'Error communicating with the hardware')
 
 	def setspeed(self):
+		"""Set the speed of the roomba
+			1: slow
+			2: fast
+			3: OHGODOHGODOHGOD
+		"""
 		if self.locked and self.lockedBy != request.environ.get('REMOTE_ADDR'):
 			abort(403,'This Roomba is in use')
 
@@ -107,6 +121,7 @@ class restfulRoombaServer(object):
 		else:
 			try:
 				data = int(data)
+				print data
 				self.roomba.setSpeed(data)
 			except ValueError:
 				abort(400,'Invalid data recieved')
@@ -114,6 +129,7 @@ class restfulRoombaServer(object):
 				abort(503,'Error communicating with the hardware %s', str(e))
 
 	def sensors(self,id):
+		"""retreieve data from a single sensor"""
 		if self.locked and self.lockedBy != request.environ.get('REMOTE_ADDR'):
 			abort(403,'This Roomba is in use')
 
